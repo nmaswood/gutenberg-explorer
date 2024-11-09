@@ -1,25 +1,29 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@nuxt/eslint", "shadcn-nuxt", "@nuxtjs/tailwindcss", '@nuxtjs/color-mode'],
-
+  modules: [
+    "@nuxt/eslint",
+    "shadcn-nuxt",
+    "@nuxtjs/tailwindcss",
+    "@nuxtjs/color-mode",
+  ],
   colorMode: {
-    classSuffix: ''
+    classSuffix: "",
   },
 
   shadcn: {
     /**
      * Prefix for all the imported component
      */
-    prefix: '',
+    prefix: "",
     /**
      * Directory that the component lives in.
      * @default "./components/ui"
      */
-    componentDir: './components/ui'
+    componentDir: "./components/ui",
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ["~/assets/css/main.css"],
 
   postcss: {
     plugins: {
@@ -29,4 +33,4 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: "2024-11-05",
-})
+});
