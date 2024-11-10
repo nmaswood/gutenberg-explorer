@@ -1,3 +1,4 @@
+import type { ChatCompletion } from "groq-sdk/resources/chat/completions.mjs";
 import type { IBook } from "~/types/IBook";
 
 export async function getBook(bookId: string) {
@@ -60,5 +61,25 @@ export async function getRecentlyViewedBooks(params: {
   }
   if (data.value) {
     useState("recentBooks").value = data.value;
+  }
+}
+export async function getBookAnalysis(bookId: string, content: string) {
+  const cookieHeaders = useRequestHeaders(["cookie"]);
+
+  const { data, error } = await useFetch<ChatCompletion>(
+    `/api/books/${bookId}/analysis`,
+    {
+      method: "POST",
+      headers: cookieHeaders as HeadersInit,
+      body: {
+        content,
+      },
+    }
+  );
+  if (error.value) {
+    return useErrorMapper(error.value?.data.data);
+  }
+  if (data.value) {
+    useState(`analysis-${bookId}`).value = data.value;
   }
 }

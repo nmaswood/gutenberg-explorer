@@ -15,14 +15,24 @@ import {
 } from "~/server/database/repositories/bookRepository";
 const { JSDOM } = jsdom;
 const standardBookError = getMappedError("Not Found", "Book Id Does Not Exist");
+const missingBookIdError = getMappedError("Not Found", "Book Id is required");
+const notFoundUserError = getMappedError("Not Found", "User not found");
 export default defineEventHandler(
   async (event: H3Event<EventHandlerRequest>) => {
     const bookId = getRouterParam(event, "bookId");
-    if (!bookId) throw new Error("Book ID is required");
+    if (!bookId)
+      return sendError(
+        event,
+        createError({ statusCode: 401, data: missingBookIdError })
+      );
     const authToken = getCookie(event, "auth_token");
     const user = await getUserBySessionToken(authToken || "");
     const userId = user?.id;
-    if (!userId) throw new Error("User not found");
+    if (!userId)
+      return sendError(
+        event,
+        createError({ statusCode: 401, data: notFoundUserError })
+      );
     const book = await getBookById(bookId);
     if (book) {
       await updateOrCreateRecentBook(bookId, userId);

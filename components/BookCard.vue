@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IBook } from "../types/IBook";
+import type { IBook } from "~/types/IBook";
 
 defineProps<{
   book: IBook;

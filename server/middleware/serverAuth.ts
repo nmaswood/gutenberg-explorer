@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import { authCheck } from "../app/services/userService";
+import { authCheck } from "~/server/app/services/userService";
 
 export default eventHandler(async (event) => {
   const isAllowed = await protectAuthRoute(event);
