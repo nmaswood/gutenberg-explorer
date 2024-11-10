@@ -15,7 +15,7 @@ defineProps<{
   >
     <Card class="overflow-hidden h-full">
       <CardHeader>
-        <CardTitle>{{ book.title }}</CardTitle>
+        <CardTitle class="truncate">{{ book.title }}</CardTitle>
         <CardDescription>
           {{ book.author }}
         </CardDescription>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Terminal } from "lucide-vue-next";
+import { AlertCircle } from "lucide-vue-next";
 
 import { loginWithEmail } from "@/composables/useAuth";
 import { loginBodySchema } from "@/server/app/formRequests/LoginRequest";
@@ -28,63 +28,65 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <Card class="mx-auto max-w-sm my-4">
-    <CardHeader>
-      <CardTitle class="text-xl"> Login </CardTitle>
-      <CardDescription>
-        Enter your email below to login to your account
-      </CardDescription>
-    </CardHeader>
-    <CardContent>
-      <form class="space-y-6" @submit="onSubmit">
-        <FormField v-slot="{ componentField }" name="email">
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <FormControl>
-              <Input
-                type="email"
-                placeholder="m@example.com"
-                v-bind="componentField"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="password">
-          <FormItem>
-            <FormLabel>Name</FormLabel>
-            <FormControl>
-              <Input
-                type="password"
-                placeholder="***"
-                v-bind="componentField"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <Alert v-if="errors?.size">
-          <Terminal class="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            <div v-for="[key, value] in errors" :key="key">
-              {{ value.message }}
-            </div>
-          </AlertDescription>
-        </Alert>
-        <Button type="submit" class="w-full"> Submit </Button>
-        <div class="mt-4 text-center text-sm">
-          Don't have an account?
-          <NuxtLink
-            :to="{
-              name: 'auth-signup',
-            }"
-            class="underline"
-          >
-            Sign up
-          </NuxtLink>
-        </div>
-      </form>
-    </CardContent>
-  </Card>
+  <div class="flex items-center justify-center min-h-screen">
+    <Card class="max-w-sm">
+      <CardHeader>
+        <CardTitle class="text-xl text-center"> Login </CardTitle>
+        <CardDescription>
+          Enter your email below to login to your account
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form class="space-y-6" @submit="onSubmit">
+          <FormField v-slot="{ componentField }" name="email">
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="m@example.com"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="password">
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="***"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <Alert v-if="errors?.size" variant="destructive">
+            <AlertCircle class="w-4 h-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              <div v-for="[key, value] in errors" :key="key">
+                {{ value.message }}
+              </div>
+            </AlertDescription>
+          </Alert>
+          <Button type="submit" class="w-full"> Submit </Button>
+          <div class="mt-4 text-center text-sm">
+            Don't have an account?
+            <NuxtLink
+              :to="{
+                name: 'auth-signup',
+              }"
+              class="underline"
+            >
+              Sign up
+            </NuxtLink>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  </div>
 </template>

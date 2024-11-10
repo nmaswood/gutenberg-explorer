@@ -3,7 +3,7 @@ export interface IBook {
   title: string;
   author: string;
   imageSrc?: string;
-  content: string;
+  content?: string;
   metadata: {
     [key: string]: {
       text: string;

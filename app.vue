@@ -8,7 +8,9 @@ nuxtApp.hook("page:finish", () => {
 await useUser();
 </script>
 <template>
-  <div class="dark:bg-black min-h-screen dark:text-white container">
+  <NuxtLoadingIndicator />
+
+  <div class="dark:bg-black min-h-screen dark:text-white">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

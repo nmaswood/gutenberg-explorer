@@ -12,6 +12,7 @@ import { Slash, Terminal } from "lucide-vue-next";
 import { getBook, getBookAnalysis } from "~/composables/useBook";
 import type { IBook } from "~/types/IBook";
 import type { InputValidation } from "~/types/InputValidation";
+import Separator from "../components/ui/separator/Separator.vue";
 const route = useRoute();
 const bookId = route.params.bookId;
 const errors: Ref<Map<string, { message: InputValidation }> | undefined> = ref(
@@ -29,6 +30,7 @@ definePageMeta({
   middleware: "auth",
 });
 const downloadFile = () => {
+  if (!book.value.content) return;
   const blob = new Blob([book.value.content], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
 
@@ -42,6 +44,7 @@ const downloadFile = () => {
 };
 const analysisLoading = ref(false);
 const analysisHandler = async () => {
+  if (!book.value.content) return;
   analysisLoading.value = true;
   await getBookAnalysis(bookId as string, book.value.content);
   analysisLoading.value = false;
@@ -50,15 +53,19 @@ const analysisHandler = async () => {
 <template>
   <div class="flex flex-col gap-6">
     <Breadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList class="flex-nowrap">
         <BreadcrumbItem>
           <BreadcrumbLink href="/"> Books </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>
           <Slash />
         </BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbPage>{{ book?.title || `book-${bookId}` }}</BreadcrumbPage>
+        <BreadcrumbItem class="grow-0 truncate">
+          <BreadcrumbPage class="w-full">
+            <div class="truncate">
+              {{ book.title }}
+            </div>
+          </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -76,9 +83,11 @@ const analysisHandler = async () => {
         class="flex flex-col sm:flex-row sm:items-center gap-3 justify-between"
       >
         <h1 class="text-2xl font-bold">{{ book.title }}</h1>
-        <Button variant="outline" @click="downloadFile">Download</Button>
+        <Button v-if="book.content" variant="outline" @click="downloadFile"
+          >Download</Button
+        >
       </div>
-      <div class="flex flex-col md:flex-row gap-2 md:items-start">
+      <div class="flex flex-col md:flex-row gap-4 md:items-start">
         <img class="min-w-52" :src="book.imageSrc" alt="book cover" />
         <Table>
           <TableBody>
@@ -106,6 +115,7 @@ const analysisHandler = async () => {
         </Table>
       </div>
     </div>
+    <Separator class="my-4" />
     <template v-if="text">
       <template v-for="(chunk, index) in text" :key="index">
         <div
@@ -117,7 +127,7 @@ const analysisHandler = async () => {
       </template>
     </template>
     <div
-      v-if="!analysis"
+      v-if="!analysis && book.content"
       class="flex flex-col sm:flex-row gap-3 justify-between sm:items-center"
     >
       <div>Need to analyze the book? Click the button.</div>

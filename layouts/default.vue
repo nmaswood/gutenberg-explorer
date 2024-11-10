@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { CircleUser, Menu } from "lucide-vue-next";
+import { Theme } from "@/types/ITheme";
+import { CircleUser, Menu, Moon, Sun } from "lucide-vue-next";
 import { userLogout } from "~/composables/useAuth";
 const logout = userLogout;
+const colorMode = useColorMode();
+const setColorTheme = (newTheme: Theme) => {
+  colorMode.preference = newTheme;
+};
 </script>
 
 <template>
@@ -37,7 +42,25 @@ const logout = userLogout;
           </nav>
         </SheetContent>
       </Sheet>
-      <div class="ml-auto">
+      <div class="ml-auto flex items-center gap-2">
+        <Button
+          v-if="$colorMode.value == Theme.LIGHT"
+          variant="secondary"
+          size="icon"
+          class="rounded-full"
+          @click="setColorTheme(Theme.DARK)"
+        >
+          <Sun class="h-5 w-5" />
+        </Button>
+        <Button
+          v-else
+          variant="secondary"
+          size="icon"
+          class="rounded-full"
+          @click="setColorTheme(Theme.LIGHT)"
+        >
+          <Moon class="h-5 w-5" />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button variant="secondary" size="icon" class="rounded-full">
@@ -52,7 +75,7 @@ const logout = userLogout;
       </div>
     </header>
     <main
-      class="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10"
+      class="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-6"
     >
       <NuxtPage />
     </main>

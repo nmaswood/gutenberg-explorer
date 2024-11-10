@@ -4,6 +4,15 @@ import { getBooks, getRecentlyViewedBooks } from "~/composables/useBook";
 import type { IBook, IRecentBook } from "~/types/IBook";
 
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
   Pagination,
   PaginationEllipsis,
   PaginationList,
@@ -11,6 +20,8 @@ import {
   PaginationNext,
   PaginationPrev,
 } from "@/components/ui/pagination";
+import DialogFooter from "../components/ui/dialog/DialogFooter.vue";
+import Separator from "../components/ui/separator/Separator.vue";
 definePageMeta({
   middleware: "auth",
 });
@@ -92,7 +103,7 @@ watch([searchField, booksPage, recentBooksPage], () => {
 </script>
 <template>
   <div class="flex flex-col gap-6">
-    <div class="flex items-center gap-3 justify-between">
+    <!-- <div class="flex items-center gap-3 justify-between">
       <Input
         v-model="searchBookId"
         type="text"
@@ -101,20 +112,52 @@ watch([searchField, booksPage, recentBooksPage], () => {
         @keydown.enter="goToSpecifcBook"
       />
       <Button @click="goToSpecifcBook">Go</Button>
-    </div>
+    </div> -->
     <div class="flex flex-col gap-3">
-      <div class="flex items-center gap-2 justify-between">
-        <h1
-          class="text-center text-5xl font-extrabold text-gray-900 dark:text-gray-400 ml-4"
-        >
+      <div
+        class="flex flex-col sm:flex-row sm:items-center gap-8 justify-between"
+      >
+        <h1 class="text-5xl font-extrabold text-gray-900 dark:text-gray-400">
           Books
         </h1>
-
-        <Input v-model="search" type="text" placeholder="Search" class="w-40" />
+        <div class="grow flex sm:justify-end items-center gap-8">
+          <div class="grow max-w-96">
+            <Input
+              v-model="search"
+              type="text"
+              placeholder="Search"
+              class="w-full"
+            />
+          </div>
+          <Dialog>
+            <DialogTrigger as-child>
+              <Button variant="outline"> Add Book </Button>
+            </DialogTrigger>
+            <DialogContent class="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add Book</DialogTitle>
+                <DialogDescription>
+                  Know the book id? Search here
+                </DialogDescription>
+              </DialogHeader>
+              <div class="flex items-center space-x-2">
+                <Input
+                  v-model="searchBookId"
+                  type="text"
+                  placeholder="Book ID"
+                  @keydown.enter="goToSpecifcBook"
+                />
+              </div>
+              <DialogFooter>
+                <Button @click="goToSpecifcBook"> Search </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
       <template v-if="books.data.length">
         <div
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
         >
           <BookCard v-for="book in books.data" :key="book.id" :book="book" />
         </div>
@@ -162,15 +205,14 @@ watch([searchField, booksPage, recentBooksPage], () => {
         </CardContent>
       </Card>
     </div>
+    <Separator v-if="recentBooks.data.length" class="my-4" />
 
     <div v-if="recentBooks.data.length" class="flex flex-col gap-3">
-      <h1
-        class="text-center text-5xl font-extrabold text-gray-900 dark:text-gray-400 ml-4"
-      >
+      <h1 class="text-5xl font-extrabold text-gray-900 dark:text-gray-400">
         Recent Books
       </h1>
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
       >
         <BookCard
           v-for="recentBook in recentBooks.data"

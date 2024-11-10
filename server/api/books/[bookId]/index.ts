@@ -47,13 +47,15 @@ export default defineEventHandler(
         fetch(contentUrl),
         fetch(metadataUrl),
       ]);
-      const status = metadataResponse.status;
-      if (status >= 400) {
+      const metadataStatus = metadataResponse.status;
+      if (metadataStatus >= 400) {
         return sendError(
           event,
           createError({ statusCode: 401, data: standardBookError })
         );
       }
+      const contentStatus = contentResponse.status;
+      console.log(contentStatus);
       const [content, metadata] = await Promise.all([
         contentResponse.text(),
         metadataResponse.text(),
@@ -96,9 +98,9 @@ export default defineEventHandler(
       await createBook({
         id: bookId,
         title: data.title?.[0]?.text || "",
-        author: data.author?.[0]?.text || "",
+        author: data.author?.[0]?.text || data.editor?.[0]?.text || "-",
         imageSrc: imageSrc,
-        content: content,
+        content: contentStatus >= 400 ? undefined : content,
         metadata: data,
       });
       await updateOrCreateRecentBook(bookId, userId);
@@ -108,7 +110,7 @@ export default defineEventHandler(
         title: data.title?.[0]?.text || "",
         author: data.author?.[0]?.text || "",
         imageSrc,
-        content: content,
+        content: contentStatus >= 400 ? undefined : content,
         metadata: data,
       };
     } catch (error) {
