@@ -3,13 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "pnpm i && nuxt build",
     "dev": "pnpm i && nuxt dev --open --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "@nuxt/eslint": "^0.6.1",
@@ -51,5 +52,8 @@
   },
   "prisma": {
     "schema": "server/database/schema.prisma"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
