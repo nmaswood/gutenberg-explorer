@@ -46,7 +46,7 @@ const onSubmit = handleSubmit(async (values) => {
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="shadcn"
+                  placeholder="Enter your name"
                   v-bind="componentField"
                 />
               </FormControl>
@@ -71,7 +71,7 @@ const onSubmit = handleSubmit(async (values) => {
           </FormField>
           <FormField v-slot="{ componentField }" name="password">
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input
                   type="password"

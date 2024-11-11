@@ -123,11 +123,18 @@ const analysisHandler = async () => {
       <Separator class="my-4" />
       <div v-if="text" ref="textAnalysisRef">
         <template v-for="(chunk, index) in text" :key="index">
+          <li v-if="/^[0-9]+\./.test(chunk)" class="mt-1">
+            {{ chunk.split(".")[1] }}
+          </li>
           <div
-            v-if="index != text?.length - 1"
-            :class="chunk.startsWith('**') ? 'text-xl font-semibold' : ''"
+            v-else
+            :class="
+              chunk.startsWith('**')
+                ? `text-xl font-semibold ${index == 0 ? '' : 'mt-3'}`
+                : 'mt-1'
+            "
           >
-            {{ chunk.replaceAll("**", "") }}
+            {{ chunk.startsWith("**") ? chunk.replaceAll("**", "") : chunk }}
           </div>
         </template>
       </div>
@@ -149,7 +156,7 @@ const analysisHandler = async () => {
               class="loader mx-auto border-white dark:border-black h-5 w-5"
             />
 
-            Analysis book
+            Analyze book
           </div>
         </Button>
       </div>

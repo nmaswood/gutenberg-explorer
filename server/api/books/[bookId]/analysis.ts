@@ -39,7 +39,7 @@ export async function getGroqChatStream(content: string) {
       {
         role: "user",
         content:
-          "I want to analyze this book, Identify key characters, language detection, Sentiment Analysis and Plot Summary",
+          "I want to analyze this book, Identify key characters, language detection, Sentiment Analysis and Plot Summary. Response should only contain the analysis.",
       },
     ],
     model: "llama3-8b-8192",
