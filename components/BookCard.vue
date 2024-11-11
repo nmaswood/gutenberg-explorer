@@ -27,7 +27,7 @@ defineProps<{
             class="aspect-square w-full rounded-md object-cover"
             :src="book.imageSrc || '/placeholder.svg'"
             width="300"
-          />
+          >
         </div>
       </CardContent>
       <CardFooter v-if="lastViewed" class="mt-auto">

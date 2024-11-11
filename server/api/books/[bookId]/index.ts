@@ -112,7 +112,7 @@ export default defineEventHandler(
         content: contentStatus >= 400 ? undefined : content,
         metadata: data,
       };
-    } catch (error) {
+    } catch {
       return sendError(
         event,
         createError({ statusCode: 401, data: standardBookError })

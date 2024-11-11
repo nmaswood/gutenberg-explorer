@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { AlertCircle, Terminal } from "lucide-vue-next";
-
 import { registerWithEmail } from "@/composables/useAuth";
 import type { InputValidation } from "@/types/InputValidation";
 import { toTypedSchema } from "@vee-validate/zod";

@@ -93,7 +93,7 @@ const analysisHandler = async () => {
           >
         </div>
         <div class="flex flex-col md:flex-row gap-4 md:items-start">
-          <img class="min-w-52" :src="book.imageSrc" alt="book cover" />
+          <img class="min-w-52" :src="book.imageSrc" alt="book cover" >
           <Table class="min-w-96">
             <TableBody>
               <template v-for="(value, key, index) in metaData" :key="index">
