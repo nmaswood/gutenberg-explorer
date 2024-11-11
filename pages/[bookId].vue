@@ -82,7 +82,7 @@ const analysisHandler = async () => {
         </div>
         <div class="flex flex-col md:flex-row gap-4 md:items-start">
           <img class="min-w-52" :src="book.imageSrc" alt="book cover" />
-          <Table>
+          <Table class="min-w-96">
             <TableBody>
               <template v-for="(value, key, index) in metaData" :key="index">
                 <TableRow v-for="(row, rowIndex) in value" :key="rowIndex">
@@ -125,7 +125,7 @@ const analysisHandler = async () => {
       >
         <div>Need to analyze the book? Click the button.</div>
         <Button
-          class="w-32"
+          class="w-36"
           :disable="analysisLoading"
           :disabled="analysisLoading"
           @click="analysisHandler"

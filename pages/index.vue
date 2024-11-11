@@ -28,7 +28,7 @@ definePageMeta({
 const route = useRoute();
 const booksPage = ref(+(route.query.page || 1) || 1);
 const recentBooksPage = ref(+(route.query.recentBooksPage || 1) || 1);
-const take = ref(3);
+const take = ref(10);
 const search = ref((route.query.search || "") as string);
 const searchField = ref((route.query.search || "") as string);
 await Promise.all([
@@ -76,6 +76,7 @@ let timeout: NodeJS.Timeout;
 watch(search, () => {
   clearTimeout(timeout);
   timeout = setTimeout(() => {
+    booksPage.value = 1;
     searchField.value = search.value;
     refetchBooks();
   }, 500);
