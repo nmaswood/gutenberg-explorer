@@ -1,5 +1,9 @@
 import { Groq } from "groq-sdk";
+import type { ChatCompletion } from "groq-sdk/resources/chat/completions.mjs";
 import { defineEventHandler, type EventHandlerRequest, type H3Event } from "h3";
+import { getMappedError } from "~/server/app/errors/errorMapper";
+const bookError = (type: string, message: string) =>
+  getMappedError(type, message);
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 export default defineEventHandler(
@@ -8,7 +12,24 @@ export default defineEventHandler(
     if (!bookId) throw new Error("Book ID is required");
     const { content } = await readBody(event);
     if (!content) throw new Error("Content is required");
-    return await getGroqChatStream(content);
+    try {
+      const response: ChatCompletion = await getGroqChatStream(content);
+      return response;
+    } catch (error) {
+      const e = error as {
+        error: { error: { type: string; code?: string; message: string } };
+      };
+      return sendError(
+        event,
+        createError({
+          statusCode: 401,
+          data: bookError(
+            e.error.error.code || e.error.error.type,
+            e.error.error.message
+          ),
+        })
+      );
+    }
   }
 );
 export async function getGroqChatStream(content: string) {

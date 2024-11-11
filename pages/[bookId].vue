@@ -22,6 +22,9 @@ const response = await getBook(bookId as string);
 errors.value = response?.errors;
 const book: Ref<IBook> = useState(`book-${bookId}`);
 const analysis: Ref<ChatCompletion> = useState(`analysis-${bookId}`);
+const analysisError: Ref<
+  Map<string, { message: InputValidation }> | undefined
+> = ref(new Map<string, { message: InputValidation }>());
 const text = computed(() =>
   analysis.value?.choices?.[0]?.message?.content?.split("\n")
 );
@@ -46,7 +49,11 @@ const analysisLoading = ref(false);
 const analysisHandler = async () => {
   if (!book.value.content) return;
   analysisLoading.value = true;
-  await getBookAnalysis(bookId as string, book.value.content);
+  const analysisResponse = await getBookAnalysis(
+    bookId as string,
+    book.value.content
+  );
+  analysisError.value = analysisResponse?.errors;
   analysisLoading.value = false;
 };
 </script>
@@ -119,8 +126,9 @@ const analysisHandler = async () => {
           </div>
         </template>
       </template>
+      <BaseError v-if="analysisError?.size" :errors="analysisError" />
       <div
-        v-if="!analysis && book.content"
+        v-if="!analysis && book.content && !analysisError?.size"
         class="flex flex-col sm:flex-row gap-3 justify-between sm:items-center"
       >
         <div>Need to analyze the book? Click the button.</div>

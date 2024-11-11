@@ -55,7 +55,6 @@ export default defineEventHandler(
         );
       }
       const contentStatus = contentResponse.status;
-      console.log(contentStatus);
       const [content, metadata] = await Promise.all([
         contentResponse.text(),
         metadataResponse.text(),
