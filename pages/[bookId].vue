@@ -46,6 +46,7 @@ const downloadFile = () => {
   URL.revokeObjectURL(url);
 };
 const analysisLoading = ref(false);
+const textAnalysisRef: Ref<HTMLElement | null> = ref(null);
 const analysisHandler = async () => {
   if (!book.value.content) return;
   analysisLoading.value = true;
@@ -55,6 +56,10 @@ const analysisHandler = async () => {
   );
   analysisError.value = analysisResponse?.errors;
   analysisLoading.value = false;
+  if (textAnalysisRef.value) {
+    const top = textAnalysisRef.value.offsetTop - 100;
+    window.scrollTo({ top, behavior: "smooth" });
+  }
 };
 </script>
 <template>
@@ -116,7 +121,7 @@ const analysisHandler = async () => {
         </div>
       </div>
       <Separator class="my-4" />
-      <template v-if="text">
+      <div v-if="text" ref="textAnalysisRef">
         <template v-for="(chunk, index) in text" :key="index">
           <div
             v-if="index != text?.length - 1"
@@ -125,7 +130,7 @@ const analysisHandler = async () => {
             {{ chunk.replaceAll("**", "") }}
           </div>
         </template>
-      </template>
+      </div>
       <BaseError v-if="analysisError?.size" :errors="analysisError" />
       <div
         v-if="!analysis && book.content && !analysisError?.size"
