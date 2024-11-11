@@ -8,7 +8,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import type { ChatCompletion } from "groq-sdk/resources/chat/completions.mjs";
-import { Slash, Terminal } from "lucide-vue-next";
+import { Slash } from "lucide-vue-next";
 import { getBook, getBookAnalysis } from "~/composables/useBook";
 import type { IBook } from "~/types/IBook";
 import type { InputValidation } from "~/types/InputValidation";
@@ -63,107 +63,83 @@ const analysisHandler = async () => {
         <BreadcrumbItem class="grow-0 truncate">
           <BreadcrumbPage class="w-full">
             <div class="truncate">
-              {{ book.title }}
+              {{ book?.title || bookId }}
             </div>
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-    <Alert v-if="errors?.size">
-      <Terminal class="h-4 w-4" />
-      <AlertTitle>Error</AlertTitle>
-      <AlertDescription>
-        <div v-for="[key, value] in errors" :key="key">
-          {{ value.message }}
-        </div>
-      </AlertDescription>
-    </Alert>
-    <div v-else class="flex flex-col gap-6">
-      <div
-        class="flex flex-col sm:flex-row sm:items-center gap-3 justify-between"
-      >
-        <h1 class="text-2xl font-bold">{{ book.title }}</h1>
-        <Button v-if="book.content" variant="outline" @click="downloadFile"
-          >Download</Button
-        >
-      </div>
-      <div class="flex flex-col md:flex-row gap-4 md:items-start">
-        <img class="min-w-52" :src="book.imageSrc" alt="book cover" />
-        <Table>
-          <TableBody>
-            <template v-for="(value, key, index) in metaData" :key="index">
-              <TableRow v-for="(row, rowIndex) in value" :key="rowIndex">
-                <TableCell class="font-medium capitalize">
-                  {{ key }}
-                </TableCell>
-                <TableCell>
-                  <NuxtLink
-                    v-if="row.href"
-                    target="_blank"
-                    :to="row.href"
-                    class="underline"
-                  >
-                    {{ row.text }}
-                  </NuxtLink>
-                  <span v-else>
-                    {{ row.text }}
-                  </span>
-                </TableCell>
-              </TableRow>
-            </template>
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-    <Separator class="my-4" />
-    <template v-if="text">
-      <template v-for="(chunk, index) in text" :key="index">
+    <BaseError v-if="errors?.size" :errors="errors" />
+    <template v-else>
+      <div class="flex flex-col gap-6">
         <div
-          v-if="index != text?.length - 1"
-          :class="chunk.startsWith('**') ? 'text-xl font-semibold' : ''"
+          class="flex flex-col sm:flex-row sm:items-center gap-3 justify-between"
         >
-          {{ chunk.replaceAll("**", "") }}
+          <h1 class="text-2xl font-bold">{{ book?.title }}</h1>
+          <Button v-if="book.content" variant="outline" @click="downloadFile"
+            >Download</Button
+          >
         </div>
+        <div class="flex flex-col md:flex-row gap-4 md:items-start">
+          <img class="min-w-52" :src="book.imageSrc" alt="book cover" />
+          <Table>
+            <TableBody>
+              <template v-for="(value, key, index) in metaData" :key="index">
+                <TableRow v-for="(row, rowIndex) in value" :key="rowIndex">
+                  <TableCell class="font-medium capitalize">
+                    {{ key }}
+                  </TableCell>
+                  <TableCell>
+                    <NuxtLink
+                      v-if="row.href"
+                      target="_blank"
+                      :to="row.href"
+                      class="underline"
+                    >
+                      {{ row.text }}
+                    </NuxtLink>
+                    <span v-else>
+                      {{ row.text }}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              </template>
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+      <Separator class="my-4" />
+      <template v-if="text">
+        <template v-for="(chunk, index) in text" :key="index">
+          <div
+            v-if="index != text?.length - 1"
+            :class="chunk.startsWith('**') ? 'text-xl font-semibold' : ''"
+          >
+            {{ chunk.replaceAll("**", "") }}
+          </div>
+        </template>
       </template>
-    </template>
-    <div
-      v-if="!analysis && book.content"
-      class="flex flex-col sm:flex-row gap-3 justify-between sm:items-center"
-    >
-      <div>Need to analyze the book? Click the button.</div>
-      <Button
-        class="w-32"
-        :disable="analysisLoading"
-        :disabled="analysisLoading"
-        @click="analysisHandler"
+      <div
+        v-if="!analysis && book.content"
+        class="flex flex-col sm:flex-row gap-3 justify-between sm:items-center"
       >
-        <span
-          v-if="analysisLoading"
-          class="loader mx-auto border-black h-5 w-5"
-        />
+        <div>Need to analyze the book? Click the button.</div>
+        <Button
+          class="w-32"
+          :disable="analysisLoading"
+          :disabled="analysisLoading"
+          @click="analysisHandler"
+        >
+          <div class="flex items-center gap-3">
+            <span
+              v-if="analysisLoading"
+              class="loader mx-auto border-white dark:border-black h-5 w-5"
+            />
 
-        <span v-else> Analysis book </span>
-      </Button>
-    </div>
+            Analysis book
+          </div>
+        </Button>
+      </div>
+    </template>
   </div>
 </template>
-
-<style>
-.loader {
-  border-style: solid;
-  border-width: 0.25rem;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  display: block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-}
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>

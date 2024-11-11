@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { AlertCircle } from "lucide-vue-next";
-
 import { loginWithEmail } from "@/composables/useAuth";
 import { loginBodySchema } from "@/server/app/formRequests/LoginRequest";
 import type { InputValidation } from "@/types/InputValidation";
@@ -19,11 +17,13 @@ const formSchema = toTypedSchema(loginBodySchema);
 const { handleSubmit } = useForm({
   validationSchema: formSchema,
 });
-
+const isLoading = ref(false);
 const onSubmit = handleSubmit(async (values) => {
+  isLoading.value = true;
   errors.value = new Map<string, { message: InputValidation }>();
   const response = await loginWithEmail(values);
   errors.value = response.errors;
+  isLoading.value = false;
 });
 </script>
 
@@ -64,16 +64,18 @@ const onSubmit = handleSubmit(async (values) => {
               <FormMessage />
             </FormItem>
           </FormField>
-          <Alert v-if="errors?.size" variant="destructive">
-            <AlertCircle class="w-4 h-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              <div v-for="[key, value] in errors" :key="key">
-                {{ value.message }}
-              </div>
-            </AlertDescription>
-          </Alert>
-          <Button type="submit" class="w-full"> Submit </Button>
+          <BaseError v-if="errors?.size" :errors="errors" />
+
+          <Button type="submit" class="w-full">
+            <div class="flex items-center gap-3">
+              <span
+                v-if="isLoading"
+                class="loader mx-auto border-white dark:border-black h-5 w-5"
+              />
+
+              Submit
+            </div>
+          </Button>
           <div class="mt-4 text-center text-sm">
             Don't have an account?
             <NuxtLink
