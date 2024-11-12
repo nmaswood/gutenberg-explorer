@@ -1,0 +1,51 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String               @id @default(cuid())
+  password           String
+  email              String               @unique
+  name               String
+  RecentlyViewedBook RecentlyViewedBook[]
+  Session            Session[]
+}
+
+model Session {
+  id        Int       @id @default(autoincrement())
+  authToken String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Book {
+  id                 String               @id @default(cuid())
+  title              String
+  author             String
+  imageSrc           String?
+  content            String?              @db.LongText
+  metadata           Json
+  RecentlyViewedBook RecentlyViewedBook[]
+}
+
+model RecentlyViewedBook {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  bookId       String   @map("book_id")
+  createdAt    DateTime @default(now())
+  book         Book     @relation(fields: [bookId], references: [id])
+  user         User     @relation(fields: [userId], references: [id])
+  lastViewedAt DateTime
+
+  @@unique([userId, bookId])
+  @@index([lastViewedAt])
+}
